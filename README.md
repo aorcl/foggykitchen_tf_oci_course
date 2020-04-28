@@ -6,12 +6,49 @@ In this course, you can find 10 lessons (+ 4 extra lessons) with the Terraform's
 
 ## How to use code from the lessons
 
+### STEP 0.
+
+Prepare SSH key pair
+
+```
+ssh-keygen
+```
+
+Answer to the questions asked:
+
+Enter file in which to save the key: **/tmp/id_rsa**
+
+Enter passphrase: **Enter for no passphrase**
+
+```
+chmod 600 /tmp/id_rsa
+```
+
+Prepare API Signing key 
+
+```
+openssl genrsa -out /tmp/oci_api_key.pem 2048
+chmod go-rwx /tmp/oci_api_key.pem
+openssl rsa -pubout -in /tmp/oci_api_key.pem -out /tmp/oci_api_key_public.pem
+
+cat /tmp/oci_api_key_public.pem
+```
+
+To associate it with an OCI user: go to **OCI menu > Identity > Users** and select your user, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell
+
+
+To verify key's fingerprint, check that the value show for the uploaded key is the same as shown in the shell:
+```
+openssl rsa -pubout -outform DER -in /tmp/oci_api_key.pem | openssl md5 -c
+```
+
+
 ### STEP 1.
 
 Clone the repo from github by executing the command as follows and then go to foggykitchen_tf_oci_course directory:
 
 ```
-Martin-MacBook-Pro:~ martinlinxfeld$ git clone https://github.com/mlinxfeld/foggykitchen_tf_oci_course.git
+$ git clone https://github.com/aorcl/foggykitchen_tf_oci_course.git
 Cloning into 'foggykitchen_tf_oci_course'...
 remote: Enumerating objects: 121, done.
 remote: Counting objects: 100% (121/121), done.
@@ -20,35 +57,31 @@ remote: Total 258 (delta 73), reused 79 (delta 32), pack-reused 137
 Receiving objects: 100% (258/258), 68.71 MiB | 23.28 MiB/s, done.
 Resolving deltas: 100% (142/142), done.
 
-Martin-MacBook-Pro:~ martinlinxfeld$ cd foggykitchen_tf_oci_course/
-Martin-MacBook-Pro:foggykitchen_tf_oci_course martinlinxfeld$ ls -latr
-total 48
-drwxr-xr-x  14 martinlinxfeld  staff    448 13 lut 23:23 LESSON1_single_webserver
-drwxr-xr-x  16 martinlinxfeld  staff    512 13 lut 23:23 LESSON2_second_webserver_in_other_AD
-drwxr-xr-x  17 martinlinxfeld  staff    544 13 lut 23:23 LESSON3_load_balancer
-drwxr-xr-x  23 martinlinxfeld  staff    736 13 lut 23:23 LESSON4_load_balancer_NAT_bastion
-drwxr-xr-x  25 martinlinxfeld  staff    800 13 lut 23:23 LESSON4a_load_balancer_NAT_bastion_security_groups
-drwxr-xr-x  24 martinlinxfeld  staff    768 13 lut 23:23 LESSON5_shared_filesystem
-drwxr-xr-x  27 martinlinxfeld  staff    864 13 lut 23:23 LESSON5a_shared_filesystem_security_groups
-drwxr-xr-x  26 martinlinxfeld  staff    832 13 lut 23:23 LESSON6_local_block_volumes
-drwxr-xr-x  29 martinlinxfeld  staff    928 13 lut 23:23 LESSON7_dbsystem
-drwxr-xr-x  38 martinlinxfeld  staff   1216 13 lut 23:23 LESSON8_vcn_local_peering
-drwxr-xr-x  39 martinlinxfeld  staff   1248 13 lut 23:23 LESSON9_vcn_remote_peering
-drwxr-xr-x   3 martinlinxfeld  staff     96 13 lut 23:38 ..
-drwxr-xr-x  49 martinlinxfeld  staff   1568  6 mar 09:47 LESSON10_transit_vcn
-drwxr-xr-x  16 martinlinxfeld  staff    512  6 mar 09:47 .
--rw-r--r--   1 martinlinxfeld  staff  21236  6 mar 09:47 README.md
-drwxr-xr-x  14 martinlinxfeld  staff    448 10 mar 16:23 .git
+$ cd foggykitchen_tf_oci_course/
+$ ls -latr
+total 16
+drwxr-xr-x   7 martinlinxfeld  staff   224  9 gru 17:47 ..
+drwxr-xr-x  14 martinlinxfeld  staff   448  9 gru 17:47 LESSON1_single_webserver
+drwxr-xr-x  16 martinlinxfeld  staff   512  9 gru 17:47 LESSON2_second_webserver_in_other_AD
+drwxr-xr-x  17 martinlinxfeld  staff   544  9 gru 17:47 LESSON3_load_balancer
+drwxr-xr-x  23 martinlinxfeld  staff   736  9 gru 17:47 LESSON4_load_balancer_NAT_bastion
+drwxr-xr-x  25 martinlinxfeld  staff   800  9 gru 17:47 LESSON4a_load_balancer_NAT_bastion_security_groups
+drwxr-xr-x  26 martinlinxfeld  staff   832  9 gru 17:47 LESSON5_shared_filesystem
+drwxr-xr-x  26 martinlinxfeld  staff   832  9 gru 17:47 LESSON6_local_block_volumes
+drwxr-xr-x  30 martinlinxfeld  staff   960  9 gru 17:47 LESSON7_dbsystem
+drwxr-xr-x  38 martinlinxfeld  staff  1216  9 gru 17:47 LESSON8_vcn_local_peering
+drwxr-xr-x  13 martinlinxfeld  staff   416  9 gru 17:47 .
+-rw-r--r--   1 martinlinxfeld  staff  8122  9 gru 17:47 README.md
+drwxr-xr-x  12 martinlinxfeld  staff   384  9 gru 17:47 .git
 ```
 
-### STEP 2.
+### STEP 2. - *Not necessary if you're using Cloud Shell*
 
 Within web browser go to URL: https://www.terraform.io/downloads.html. Find your platform and download the latest version of your terraform runtime. Add directory of terraform binary into PATH and check terraform version:
 
 ```
-Martin-MacBook-Pro:foggykitchen_tf_oci_course martinlinxfeld$ export PATH=$PATH:/User/martinlinxfeld/terraform
-
-Martin-MacBook-Pro:foggykitchen_tf_oci_course martinlinxfeld$ terraform --version
+$ export PATH=$PATH:/User/martinlinxfeld/terraform
+$ terraform --version
 
 Terraform v0.12.16
 
@@ -60,9 +93,11 @@ is 0.12.17. You can update by downloading from https://www.terraform.io/download
 Go to particular lesson directory and create environment file with TF_VARs (region1 + region2 required by lesson9 and lesson10):
 
 ```
-Martin-MacBook-Pro:foggykitchen_tf_oci_course martinlinxfeld$ cd LESSON8_vcn_local_peering
-
-Martin-MacBook-Pro:LESSON8_vcn_local_peering martinlinxfeld$ vi setup_oci_tf_vars.sh
+cd LESSON8_vcn_local_peering
+vi setup_oci_tf_vars.sh
+```
+Enter this content into the shell file:
+```
 export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaob4qbf2(...)uunizjie4his4vgh3jx5jxa"
 export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaas(...)krj2s3gdbz7d2heqzzxn7pe64ksbia"
 export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..aaaaaaaasbktyckn(...)ldkrj2s3gdbz7d2heqzzxn7pe64ksbia"
@@ -73,15 +108,30 @@ export TF_VAR_region1="eu-frankfurt-1"
 export TF_VAR_region2="eu-amsterdam-1"
 export TF_VAR_private_key_oci="/tmp/id_rsa"
 export TF_VAR_public_key_oci="/tmp/id_rsa.pub"
+```
 
-Martin-MacBook-Pro:LESSON8_vcn_local_peering martinlinxfeld$ source setup_oci_tf_vars.sh
+"source" the .sh file:
+```
+$ source setup_oci_tf_vars.sh
+```
+
+You will need to also modify the variables.tf file - modify the Availability domain reference variable to reflect the ADs available in your region:
+
+```
+vi variables.tf
+```
+
+```
+variable "ADs" {
+  default = ["unja:EU-FRANKFURT-1-AD-1", "unja:EU-FRANKFURT-1-AD-2", "unja:EU-FRANKFURT-1-AD-3"]
+}
 ```
 
 ### STEP 4.
 Run *terraform init* with upgrade option just to download the lastest neccesary providers for this lesson:
 
 ```
-Martin-MacBook-Pro:LESSON8_vcn_local_peering martinlinxfeld$ terraform init -upgrade
+$ terraform init -upgrade
 
 Initializing the backend...
 
@@ -115,7 +165,7 @@ commands will detect it and remind you to do so if necessary.
 Run *terraform apply* to provision the content of this lesson (type **yes** to confirm the the apply phase):
 
 ```
-Martin-MacBook-Pro:LESSON8_vcn_local_peering martinlinxfeld$ terraform apply
+$ terraform apply
 
 An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
@@ -209,7 +259,7 @@ FoggyKitchenWebserver2_PrivateIP = [
 After testing the environment you can remove the lesson's content. You should just run *terraform destroy* (type **yes** for confirmation of the destroy phase):
 
 ```
-Martin-MacBook-Pro:LESSON8_vcn_local_peering martinlinxfeld$ terraform destroy
+$ terraform destroy
 
 oci_identity_compartment.FoggyKitchenCompartment: Refreshing state... [id=ocid1.compartment.oc1..aaaaaaaagillnk7ttj6wpdhmewpibpxc5gbmrfxdtmaa3gfgjzbudesm3tsq]
 oci_identity_compartment.ExternalCompartment: Refreshing state... [id=ocid1.compartment.oc1..aaaaaaaatanq4gogyxvneubmw3nf6gmegvzyh6ylqq4c3u2i3nc36jhdemda]

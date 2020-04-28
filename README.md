@@ -1,14 +1,16 @@
-# FoggyKitchen Terraform OCI Course
+# FoggyKitchen Terraform OCI Course - **Windows version**
 
 ## Course description
 
-In this course, you can find 10 lessons (+ 4 extra lessons) with the Terraform's HCL version 0.12 code examples for the deployment of OCI resources. Our course starts with the simple example of one webserver in one regional public subnet, nested in one VCN in particular availability domain (AD). Incrementally next lessons will show you how to implement multiplied webservers, spread between ADs, located under load balancer umbrella. Further, we will make this setup even more secure by the introduction of private subnets and bastion-host to jump over. We will also explore storage options for the servers (local block volumes and shared filesystems). Besides the web tier, we will introduce VM based OCI DBSystem deployed in the fully separated private subnet. The last lesson will introduce VCN local peering for the integration of private DBSystem and external VCN with backend server (local VCN peering).  
+In this course, you can find 10 lessons (+ 4 extra lessons) with the Terraform's HCL version 0.12 code examples for the deployment of OCI resources. Our course starts with the simple example of one webserver in one regional public subnet, nested in one VCN in particular availability domain (AD). Incrementally next lessons will show you how to implement multiplied webservers, spread between ADs, located under load balancer umbrella. Further, we will make this setup even more secure by the introduction of private subnets and bastion-host to jump over. We will also explore storage options for the servers (local block volumes and shared filesystems). Besides the web tier, we will introduce VM based OCI DBSystem deployed in the fully separated private subnet. The last lesson will introduce VCN local peering for the integration of private DBSystem and external VCN with backend server (local VCN peering).
 
 ## How to use code from the lessons
 
 ### STEP 0.
 
-Prepare SSH key pair
+**0.1 - Prepare SSH key pair**
+
+In **Powershell**, execute:
 
 ```
 ssh-keygen
@@ -16,21 +18,22 @@ ssh-keygen
 
 Answer to the questions asked:
 
-Enter file in which to save the key: **/tmp/id_rsa**
+Enter file in which to save the key: **/c/tmp/id_rsa** (we presume the c:\tmp\ directory existed already)
 
-Enter passphrase: **Enter for no passphrase**
+Enter passphrase: **"Enter" for no passphrase and then another time to confirm**
 
-```
-chmod 600 /tmp/id_rsa
-```
+**0.2 - Prepare API Signing key**
 
-Prepare API Signing key 
+In **Powershell**, execute:
 
 ```
-openssl genrsa -out /tmp/oci_api_key.pem 2048
-chmod go-rwx /tmp/oci_api_key.pem
-openssl rsa -pubout -in /tmp/oci_api_key.pem -out /tmp/oci_api_key_public.pem
+openssl genrsa -out /c/tmp/oci_api_key.pem 2048
+openssl rsa -pubout -in /c/tmp/oci_api_key.pem -out /c/tmp/oci_api_key_public.pem
+```
 
+To show the contents of the public key:
+
+```
 cat /tmp/oci_api_key_public.pem
 ```
 
@@ -38,17 +41,19 @@ To associate it with an OCI user: go to **OCI menu > Identity > Users** and sele
 
 
 To verify key's fingerprint, check that the value show for the uploaded key is the same as shown in the shell:
+
 ```
-openssl rsa -pubout -outform DER -in /tmp/oci_api_key.pem | openssl md5 -c
+openssl rsa -pubout -outform DER -in /c/tmp/oci_api_key.pem | openssl md5 -c
 ```
 
 
 ### STEP 1.
 
-Clone the repo from github by executing the command as follows and then go to foggykitchen_tf_oci_course directory:
+1.1: Clone the repo from github by executing the command as follows and then go to foggykitchen_tf_oci_course directory:
 
 ```
-$ git clone https://github.com/aorcl/foggykitchen_tf_oci_course.git
+git clone https://github.com/aorcl/foggykitchen_tf_oci_course.git
+
 Cloning into 'foggykitchen_tf_oci_course'...
 remote: Enumerating objects: 121, done.
 remote: Counting objects: 100% (121/121), done.
@@ -56,78 +61,95 @@ remote: Compressing objects: 100% (89/89), done.
 remote: Total 258 (delta 73), reused 79 (delta 32), pack-reused 137
 Receiving objects: 100% (258/258), 68.71 MiB | 23.28 MiB/s, done.
 Resolving deltas: 100% (142/142), done.
-
-$ cd foggykitchen_tf_oci_course/
-$ ls -latr
-total 16
-drwxr-xr-x   7 martinlinxfeld  staff   224  9 gru 17:47 ..
-drwxr-xr-x  14 martinlinxfeld  staff   448  9 gru 17:47 LESSON1_single_webserver
-drwxr-xr-x  16 martinlinxfeld  staff   512  9 gru 17:47 LESSON2_second_webserver_in_other_AD
-drwxr-xr-x  17 martinlinxfeld  staff   544  9 gru 17:47 LESSON3_load_balancer
-drwxr-xr-x  23 martinlinxfeld  staff   736  9 gru 17:47 LESSON4_load_balancer_NAT_bastion
-drwxr-xr-x  25 martinlinxfeld  staff   800  9 gru 17:47 LESSON4a_load_balancer_NAT_bastion_security_groups
-drwxr-xr-x  26 martinlinxfeld  staff   832  9 gru 17:47 LESSON5_shared_filesystem
-drwxr-xr-x  26 martinlinxfeld  staff   832  9 gru 17:47 LESSON6_local_block_volumes
-drwxr-xr-x  30 martinlinxfeld  staff   960  9 gru 17:47 LESSON7_dbsystem
-drwxr-xr-x  38 martinlinxfeld  staff  1216  9 gru 17:47 LESSON8_vcn_local_peering
-drwxr-xr-x  13 martinlinxfeld  staff   416  9 gru 17:47 .
--rw-r--r--   1 martinlinxfeld  staff  8122  9 gru 17:47 README.md
-drwxr-xr-x  12 martinlinxfeld  staff   384  9 gru 17:47 .git
 ```
 
-### STEP 2. - *Not necessary if you're using Cloud Shell*
-
-Within web browser go to URL: https://www.terraform.io/downloads.html. Find your platform and download the latest version of your terraform runtime. Add directory of terraform binary into PATH and check terraform version:
+Navigate to the repository and switch to the windows version of the lab:
 
 ```
-$ export PATH=$PATH:/User/martinlinxfeld/terraform
-$ terraform --version
+cd foggykitchen_tf_oci_course
 
-Terraform v0.12.16
+git checkout develop-windows
 
-Your version of Terraform is out of date! The latest version
-is 0.12.17. You can update by downloading from https://www.terraform.io/downloads.html
+ls 
+
+    Directory: C:\Users\adolgano\Documents\DEVELOPMENT\github\aorcl\foggykitchen_tf_oci_course
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----       28/04/2020     16:55                LESSON10_transit_vcn
+d-----       28/04/2020     16:55                LESSON1_single_webserver
+d-----       28/04/2020     16:55                LESSON2a_second_webserver_in_another_FD
+d-----       28/04/2020     16:55                LESSON2_second_webserver_in_other_AD
+d-----       28/04/2020     16:55                LESSON3_load_balancer
+d-----       28/04/2020     16:55                LESSON4a_load_balancer_NAT_bastion_security_groups
+d-----       28/04/2020     16:55                LESSON4_load_balancer_NAT_bastion
+d-----       28/04/2020     16:55                LESSON5a_shared_filesystem_security_groups
+d-----       28/04/2020     16:55                LESSON5_shared_filesystem
+d-----       28/04/2020     16:55                LESSON6_local_block_volumes
+d-----       28/04/2020     16:55                LESSON7a_dbsystem_with_dataguard
+d-----       28/04/2020     16:55                LESSON7_dbsystem
+d-----       28/04/2020     16:55                LESSON8_vcn_local_peering
+d-----       28/04/2020     16:55                LESSON9_vcn_remote_peering
+-a----       28/04/2020     16:55             31 .gitignore
+-a----       28/04/2020     17:53          23417 README.md
+```
+
+### STEP 2. - Install the Terraform binary
+
+Follow the installation guide: https://learn.hashicorp.com/terraform/getting-started/install.html 
+
+Find your platform and download the latest version of your terraform runtime. Add directory of terraform binary into PATH and check terraform version:
+
+
+To verify the terraform binary was correctly installed, execute:
+
+```
+terraform --version
+
+  Terraform v0.12.24
 ```
 
 ### STEP 3. 
-Go to particular lesson directory and create environment file with TF_VARs (region1 + region2 required by lesson9 and lesson10):
+
+Go to particular lesson directory and create an environment file with 'TF_VAR_' variables (region1 + region2 required by lesson9 and lesson10):
+
+Example: 
 
 ```
 cd LESSON8_vcn_local_peering
-vi setup_oci_tf_vars.sh
-```
-Enter this content into the shell file:
-```
-export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaob4qbf2(...)uunizjie4his4vgh3jx5jxa"
-export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaas(...)krj2s3gdbz7d2heqzzxn7pe64ksbia"
-export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..aaaaaaaasbktyckn(...)ldkrj2s3gdbz7d2heqzzxn7pe64ksbia"
-export TF_VAR_fingerprint="00:f9:d1:41:bb:57(...)82:47:e6:00"
-export TF_VAR_private_key_path="/tmp/oci_api_key.pem"
-export TF_VAR_region="eu-frankfurt-1"
-export TF_VAR_region1="eu-frankfurt-1"
-export TF_VAR_region2="eu-amsterdam-1"
-export TF_VAR_private_key_oci="/tmp/id_rsa"
-export TF_VAR_public_key_oci="/tmp/id_rsa.pub"
+code setup_oci_tf_vars.ps1
 ```
 
-"source" the .sh file:
-```
-$ source setup_oci_tf_vars.sh
-```
-
-You will need to also modify the variables.tf file - modify the Availability domain reference variable to reflect the ADs available in your region:
+Enter this content into the powershell batch file:
 
 ```
-vi variables.tf
+$env:TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaaqyobrezj7wnjk5zt2q6zkt7j5ab4amxvepdcr23z5kor4v5ceea"
+$env:TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaalvbbkqilwful6cmkqag7ireyyx3cjwhbevh5wjlsl6zpzm4ibj4a"
+$env:TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaap4dw4cmk23tb6pm3nzy7fv4jqmtslzljkw3h2fglgnb7g44p7tva"
+$env:TF_VAR_fingerprint="91:e6:56:0c:6a:d0:15:71:f0:f3:22:bb:bd:eb:9d:eb"
+$env:TF_VAR_private_key_path="c:\tmp\oci_api_key.pem"
+$env:TF_VAR_region="eu-frankfurt-1"
+$env:TF_VAR_region1="eu-frankfurt-1"
+$env:TF_VAR_region2="eu-amsterdam-1"
+$env:TF_VAR_private_key_oci="c:\tmp\id_rsa"
+$env:TF_VAR_public_key_oci="c:\tmp\id_rsa.pub"
 ```
 
+save, then execute the file to set the variables:
+
 ```
-variable "ADs" {
-  default = ["unja:EU-FRANKFURT-1-AD-1", "unja:EU-FRANKFURT-1-AD-2", "unja:EU-FRANKFURT-1-AD-3"]
-}
+setup_oci_tf_vars.ps1
+```
+
+You can veryfy the variables were set executing
+
+```
+gci env: | Format-Table -Wrap -AutoSize
 ```
 
 ### STEP 4.
+
 Run *terraform init* with upgrade option just to download the lastest neccesary providers for this lesson:
 
 ```
@@ -162,6 +184,7 @@ commands will detect it and remind you to do so if necessary.
 ```
 
 ### STEP 5.
+
 Run *terraform apply* to provision the content of this lesson (type **yes** to confirm the the apply phase):
 
 ```
@@ -256,6 +279,7 @@ FoggyKitchenWebserver2_PrivateIP = [
 ```
 
 ### STEP 6.
+
 After testing the environment you can remove the lesson's content. You should just run *terraform destroy* (type **yes** for confirmation of the destroy phase):
 
 ```

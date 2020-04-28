@@ -1,2 +1,4 @@
 terraform.tfstate*
 .terraform/
+setup_oci_tf_vars.ps1
+setup_oci_tf_vars.sh

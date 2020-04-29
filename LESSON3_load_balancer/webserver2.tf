@@ -13,13 +13,7 @@ resource "oci_core_instance" "FoggyKitchenWebserver2" {
         source_id   = lookup(data.oci_core_images.OSImageLocal.images[0], "id")
     }
     
-    /*
     metadata = {
-        ssh_authorized_keys = file(var.public_key_oci)
-    }
-    */
-
-    extended_metadata {
         ssh_authorized_keys = tls_private_key.public_private_key_pair_2.public_key_openssh
     }
 

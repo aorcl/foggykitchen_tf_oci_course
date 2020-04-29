@@ -6,15 +6,17 @@ resource "oci_core_instance" "FoggyKitchenWebserver2" {
     availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[2], "name")
     compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
     display_name = "FoggyKitchenWebServer2"
-    shape = var.Shapes[0]
+    shape = var.Shapes
     subnet_id = oci_core_subnet.FoggyKitchenWebSubnet.id
+
     source_details {
         source_type = "image"
         source_id   = lookup(data.oci_core_images.OSImageLocal.images[0], "id")
     }
     
     metadata = {
-        ssh_authorized_keys = tls_private_key.public_private_key_pair_2.public_key_openssh
+        # public key used by the provisioner only + user provided public key:
+        ssh_authorized_keys = "${tls_private_key.public_private_key_pair_2.public_key_openssh}${var.public_ssh_key}"
     }
 
     create_vnic_details {

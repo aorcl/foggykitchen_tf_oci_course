@@ -112,22 +112,22 @@ terraform --version
 
 ### STEP 3. 
 
-Go to particular lesson directory and create an environment file with 'TF_VAR_' variables (region1 + region2 required by lesson9 and lesson10):
+Go to the lesson directory and create an environment file with 'TF_VAR_' variables (region1 + region2 required by lesson9 and lesson10):
 
-Example: 
+#### If Windows:
 
 ```
-cd LESSON8_vcn_local_peering
+cd LESSON3_load_balancer
 code setup_oci_tf_vars.ps1
 ```
 
-Enter this content into the powershell batch file:
+Enter this content into the powershell batch file, replacing the tenancy-specific IDs with your's:
 
 ```
-$env:TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaaqyobrezj7wnjk5zt2q6zkt7j5ab4amxvepdcr23z5kor4v5ceea"
-$env:TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaalvbbkqilwful6cmkqag7ireyyx3cjwhbevh5wjlsl6zpzm4ibj4a"
-$env:TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaap4dw4cmk23tb6pm3nzy7fv4jqmtslzljkw3h2fglgnb7g44p7tva"
-$env:TF_VAR_fingerprint="91:e6:56:0c:6a:d0:15:71:f0:f3:22:bb:bd:eb:9d:eb"
+$env:TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaaqyobrezj7wnjk5zt2q6(...)mxvepdcr23z5kor4v5ceea"
+$env:TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaalvbbkqilwful6cmkqa(...)whbevh5wjlsl6zpzm4ibj4a"
+$env:TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaap4dw4cmk23(...)tslzljkw3h2fglgnb7g44p7tva"
+$env:TF_VAR_fingerprint="91:e6:56:0c:6a:(...):f0:f3:22:bb:bd:eb:9d:eb"
 $env:TF_VAR_private_key_path="c:\tmp\oci_api_key.pem"
 $env:TF_VAR_region="eu-frankfurt-1"
 $env:TF_VAR_region1="eu-frankfurt-1"
@@ -142,10 +142,44 @@ save, then execute the file to set the variables:
 setup_oci_tf_vars.ps1
 ```
 
-You can veryfy the variables were set executing
+You can later veryfy the variables were set, executing
 
 ```
-gci env: | Format-Table -Wrap -AutoSize
+gci env:TF_VAR_* | Format-Table -Wrap -AutoSize
+```
+
+#### If Linux:
+
+```
+cd LESSON3_load_balancer
+vi setup_oci_tf_vars.sh
+```
+
+Enter this content into the shell file, replacing the tenancy-specific IDs with your's:
+
+```
+export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaob4qbf2(...)uunizjie4his4vgh3jx5jxa"
+export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaas(...)krj2s3gdbz7d2heqzzxn7pe64ksbia"
+export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..aaaaaaaasbktyckn(...)ldkrj2s3gdbz7d2heqzzxn7pe64ksbia"
+export TF_VAR_fingerprint="00:f9:d1:41:bb:57(...)82:47:e6:00"
+export TF_VAR_private_key_path="/tmp/oci_api_key.pem"
+export TF_VAR_region="eu-frankfurt-1"
+export TF_VAR_region1="eu-frankfurt-1"
+export TF_VAR_region2="eu-amsterdam-1"
+export TF_VAR_private_key_oci="/tmp/id_rsa"
+export TF_VAR_public_key_oci="/tmp/id_rsa.pub"
+```
+
+save, then execute the file to set the variables:
+
+```
+source setup_oci_tf_vars.sh
+```
+
+You can later veryfy the variables were set, executing
+
+```
+env | grep TF_VAR
 ```
 
 ### STEP 4.

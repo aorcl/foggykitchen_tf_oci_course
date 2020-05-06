@@ -44,22 +44,16 @@ openssl rsa -pubout -in /tmp/oci_api_key.pem -out /tmp/oci_api_key_public.pem
 
 To show the contents of the public key:
 
-In **Windows**, execute:
-
-```
-cat /c/tmp/oci_api_key_public.pem
-```
-
-In **Linux**, execute:
+In **Linux** or **Windows**
 
 ```
 cat /tmp/oci_api_key_public.pem
 ```
 
-To associate it with an OCI user: go to **OCI menu > Identity > Users** and select your user, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell
+To associate it with an OCI user: go to **OCI menu > Identity > Users** and select your user, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell. Save the user's OCID for later use.
 
 
-To verify key's fingerprint, check that the value show for the uploaded key is the same as shown in the shell:
+To verify the key's fingerprint, check that the value shown for the uploaded key is the same as shown in the shell:
 
 In **Windows**:
 
@@ -73,8 +67,24 @@ In **Linux**:
 openssl rsa -pubout -outform DER -in /tmp/oci_api_key.pem | openssl md5 -c
 ```
 
+Save the fingerprint value for later use.
 
-### STEP 1.
+### STEP 1. - Install the Terraform binary
+
+If not installed yet, follow the installation guide: https://learn.hashicorp.com/terraform/getting-started/install.html 
+
+Find your platform and download the latest version of your terraform runtime. Add directory of terraform binary into PATH and check terraform version:
+
+
+To verify the terraform binary was correctly installed, execute:
+
+```
+terraform --version
+
+  Terraform v0.12.24
+```
+
+### STEP 2.
 
 1.1: Clone the repo from github by executing the command as follows and then go to foggykitchen_tf_oci_course directory:
 
@@ -90,7 +100,7 @@ Receiving objects: 100% (258/258), 68.71 MiB | 23.28 MiB/s, done.
 Resolving deltas: 100% (142/142), done.
 ```
 
-Navigate to the repository and switch to the windows version of the lab:
+Navigate to the repository 
 
 ```
 cd foggykitchen_tf_oci_course
@@ -105,26 +115,12 @@ Mode                LastWriteTime         Length Name
 d-----       28/04/2020     16:55                LESSON3_load_balancer
 -a----       28/04/2020     16:55             31 .gitignore
 -a----       28/04/2020     17:53          23417 README.md
-```
-
-### STEP 2. - Install the Terraform binary
-
-Follow the installation guide: https://learn.hashicorp.com/terraform/getting-started/install.html 
-
-Find your platform and download the latest version of your terraform runtime. Add directory of terraform binary into PATH and check terraform version:
-
-
-To verify the terraform binary was correctly installed, execute:
-
-```
-terraform --version
-
-  Terraform v0.12.24
+-a----       28/04/2020     17:53          235   CONTRIBUTORS.md
 ```
 
 ### STEP 3. 
 
-Go to the lesson directory and create an environment file with 'TF_VAR_' variables (region1 + region2 required by lesson9 and lesson10):
+Go to the lesson directory and create an environment file with 'TF_VAR_' variables:
 
 #### If Windows:
 

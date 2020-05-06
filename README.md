@@ -26,6 +26,15 @@ Enter file in which to save the key: **/tmp/id_rsa** (we presume the /tmp/ direc
 
 Enter passphrase: **"Enter" for no passphrase and then another time to confirm**
 
+To show the contents of the public key:
+
+In **Linux** or **Windows**
+
+```
+cat /tmp/id_rsa.pub
+```
+
+
 **0.2 - Prepare API Signing key**
 
 In **Windows**, execute:
@@ -50,7 +59,7 @@ In **Linux** or **Windows**
 cat /tmp/oci_api_key_public.pem
 ```
 
-To associate it with an OCI user: go to **OCI menu > Identity > Users** and select your user, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell. Save the user's OCID for later use.
+To associate it with an OCI user: go to **OCI menu > Identity > Users** and select a user with appropriate authorizations that should be able to create the desired infrastructure, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell. Save the user's OCID for later use.
 
 
 To verify the key's fingerprint, check that the value shown for the uploaded key is the same as shown in the shell:
@@ -145,7 +154,7 @@ $env:TF_VAR_NewCompartment="TerraformWorkshop"
 save, then execute the file to set the variables:
 
 ```
-setup_oci_tf_vars.ps1
+./setup_oci_tf_vars.ps1
 ```
 
 You can later veryfy the variables were set, executing

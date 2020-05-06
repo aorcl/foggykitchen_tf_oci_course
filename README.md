@@ -95,8 +95,6 @@ Navigate to the repository and switch to the windows version of the lab:
 ```
 cd foggykitchen_tf_oci_course
 
-git checkout develop-windows
-
 ls 
 
     Directory: C:\Users\adolgano\Documents\DEVELOPMENT\github\aorcl\foggykitchen_tf_oci_course
@@ -104,20 +102,7 @@ ls
 
 Mode                LastWriteTime         Length Name
 ----                -------------         ------ ----
-d-----       28/04/2020     16:55                LESSON10_transit_vcn
-d-----       28/04/2020     16:55                LESSON1_single_webserver
-d-----       28/04/2020     16:55                LESSON2a_second_webserver_in_another_FD
-d-----       28/04/2020     16:55                LESSON2_second_webserver_in_other_AD
 d-----       28/04/2020     16:55                LESSON3_load_balancer
-d-----       28/04/2020     16:55                LESSON4a_load_balancer_NAT_bastion_security_groups
-d-----       28/04/2020     16:55                LESSON4_load_balancer_NAT_bastion
-d-----       28/04/2020     16:55                LESSON5a_shared_filesystem_security_groups
-d-----       28/04/2020     16:55                LESSON5_shared_filesystem
-d-----       28/04/2020     16:55                LESSON6_local_block_volumes
-d-----       28/04/2020     16:55                LESSON7a_dbsystem_with_dataguard
-d-----       28/04/2020     16:55                LESSON7_dbsystem
-d-----       28/04/2020     16:55                LESSON8_vcn_local_peering
-d-----       28/04/2020     16:55                LESSON9_vcn_remote_peering
 -a----       28/04/2020     16:55             31 .gitignore
 -a----       28/04/2020     17:53          23417 README.md
 ```
@@ -157,10 +142,8 @@ $env:TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaap4dw4cmk23(...)tslz
 $env:TF_VAR_fingerprint="91:e6:56:0c:6a:(...):f0:f3:22:bb:bd:eb:9d:eb"
 $env:TF_VAR_private_key_path="c:\tmp\oci_api_key.pem"
 $env:TF_VAR_region="eu-frankfurt-1"
-$env:TF_VAR_region1="eu-frankfurt-1"
-$env:TF_VAR_region2="eu-amsterdam-1"
-$env:TF_VAR_private_key_oci="c:\tmp\id_rsa"
-$env:TF_VAR_public_key_oci="c:\tmp\id_rsa.pub"
+$env:TF_VAR_public_ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAcz9dr58(...)"
+$env:TF_VAR_NewCompartment="TerraformWorkshop"
 ```
 
 save, then execute the file to set the variables:
@@ -172,7 +155,7 @@ setup_oci_tf_vars.ps1
 You can later veryfy the variables were set, executing
 
 ```
-gci env:TF_VAR_* | Format-Table -Wrap -AutoSize
+gci env:TF_VAR_*
 ```
 
 #### If Linux:
@@ -191,10 +174,8 @@ export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..aaaaaaaasbktyckn(...)ldkrj2s3
 export TF_VAR_fingerprint="00:f9:d1:41:bb:57(...)82:47:e6:00"
 export TF_VAR_private_key_path="/tmp/oci_api_key.pem"
 export TF_VAR_region="eu-frankfurt-1"
-export TF_VAR_region1="eu-frankfurt-1"
-export TF_VAR_region2="eu-amsterdam-1"
-export TF_VAR_private_key_oci="/tmp/id_rsa"
-export TF_VAR_public_key_oci="/tmp/id_rsa.pub"
+export TF_VAR_public_ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAcz9dr58(...)"
+export TF_VAR_NewCompartment="TerraformWorkshop"
 ```
 
 save, then execute the file to set the variables:

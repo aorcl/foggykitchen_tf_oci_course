@@ -2,3 +2,4 @@ terraform.tfstate*
 .terraform/
 .terraform*
 setup_oci_tf_vars.*
+*.zip

@@ -1,16 +1,14 @@
 # FoggyKitchen Terraform OCI Course - **Windows version**
 
-## Course description
-
-In this course, you can find 10 lessons (+ 4 extra lessons) with the Terraform's HCL version 0.12 code examples for the deployment of OCI resources. Our course starts with the simple example of one webserver in one regional public subnet, nested in one VCN in particular availability domain (AD). Incrementally next lessons will show you how to implement multiplied webservers, spread between ADs, located under load balancer umbrella. Further, we will make this setup even more secure by the introduction of private subnets and bastion-host to jump over. We will also explore storage options for the servers (local block volumes and shared filesystems). Besides the web tier, we will introduce VM based OCI DBSystem deployed in the fully separated private subnet. The last lesson will introduce VCN local peering for the integration of private DBSystem and external VCN with backend server (local VCN peering).
-
 ## How to use code from the lessons
 
 ### STEP 0.
 
+We will be using windows Power Shell or Linux bash, depending on the operating system you choose.
+
 **0.1 - Prepare SSH key pair**
 
-In **Powershell**, execute:
+In **Windows** or **Linux**, execute:
 
 ```
 ssh-keygen
@@ -18,20 +16,41 @@ ssh-keygen
 
 Answer to the questions asked:
 
+In **Windows**:
+
 Enter file in which to save the key: **/c/tmp/id_rsa** (we presume the c:\tmp\ directory existed already)
+
+In **Linux**: 
+
+Enter file in which to save the key: **/tmp/id_rsa** (we presume the /tmp/ directory existed already)
 
 Enter passphrase: **"Enter" for no passphrase and then another time to confirm**
 
 **0.2 - Prepare API Signing key**
 
-In **Powershell**, execute:
+In **Windows**, execute:
 
 ```
 openssl genrsa -out /c/tmp/oci_api_key.pem 2048
 openssl rsa -pubout -in /c/tmp/oci_api_key.pem -out /c/tmp/oci_api_key_public.pem
 ```
 
+In **Linux**, execute:
+
+```
+openssl genrsa -out /tmp/oci_api_key.pem 2048
+openssl rsa -pubout -in /tmp/oci_api_key.pem -out /tmp/oci_api_key_public.pem
+```
+
 To show the contents of the public key:
+
+In **Windows**, execute:
+
+```
+cat /c/tmp/oci_api_key_public.pem
+```
+
+In **Linux**, execute:
 
 ```
 cat /tmp/oci_api_key_public.pem
@@ -42,8 +61,16 @@ To associate it with an OCI user: go to **OCI menu > Identity > Users** and sele
 
 To verify key's fingerprint, check that the value show for the uploaded key is the same as shown in the shell:
 
+In **Windows**:
+
 ```
 openssl rsa -pubout -outform DER -in /c/tmp/oci_api_key.pem | openssl md5 -c
+```
+
+In **Linux**:
+
+```
+openssl rsa -pubout -outform DER -in /tmp/oci_api_key.pem | openssl md5 -c
 ```
 
 
@@ -355,7 +382,7 @@ Destroy complete! Resources: 49 destroyed.
 
 ```
 
-## Description and Topology diagrams for each lesson
+## Description and Topology diagram
 
 (for the full list of lessons from the original repository, please refer to https://github.com/mlinxfeld/foggykitchen_tf_oci_course )
 

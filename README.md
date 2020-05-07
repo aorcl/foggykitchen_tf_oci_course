@@ -61,21 +61,6 @@ cat /tmp/oci_api_key_public.pem
 
 To associate it with an OCI user: go to **OCI menu > Identity > Users** and select a user with appropriate authorizations that should be able to create the desired infrastructure, then select the **API Keys** menu and press the **Add Public Key** button. Paste the public key value shown in the shell. Save the user's OCID for later use.
 
-
-To verify the key's fingerprint, check that the value shown for the uploaded key is the same as shown in the shell:
-
-In **Windows**:
-
-```
-openssl rsa -pubout -outform DER -in /c/tmp/oci_api_key.pem | openssl md5 -c
-```
-
-In **Linux**:
-
-```
-openssl rsa -pubout -outform DER -in /tmp/oci_api_key.pem | openssl md5 -c
-```
-
 Save the fingerprint value for later use.
 
 ### STEP 1. - Install the Terraform binary
